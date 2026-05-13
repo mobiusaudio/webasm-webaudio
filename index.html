@@ -30,7 +30,15 @@
             window.addEventListener('WorkletReady', async () => {
                 try {
                     // 3. Request Microphone Access
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                    // New code: Request raw, unprocessed microphone audio
+                    const stream = await navigator.mediaDevices.getUserMedia({ 
+                        audio: {
+                            echoCancellation: false,
+                            noiseSuppression: false,
+                            autoGainControl: false
+                        }, 
+                        video: false 
+                    });
                     
                     // 4. Connect Microphone to the Wasm Worklet Node
                     const micSource = window.audioContext.createMediaStreamSource(stream);
