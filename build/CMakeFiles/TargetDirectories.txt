@@ -1,0 +1,3 @@
+C:/Users/joaor/dev/webasm-webaudio/build/CMakeFiles/audio_app.dir
+C:/Users/joaor/dev/webasm-webaudio/build/CMakeFiles/edit_cache.dir
+C:/Users/joaor/dev/webasm-webaudio/build/CMakeFiles/rebuild_cache.dir
