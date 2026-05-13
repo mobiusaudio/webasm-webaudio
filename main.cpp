@@ -78,11 +78,20 @@ extern "C" {
         g_gain = val;
     }
 
+    // Called by JS after the user clicks a button (Browser Security Requirement)
     EMSCRIPTEN_KEEPALIVE void InitAudio() {
-        EMSCRIPTEN_WEBAUDIO_T context = emscripten_create_audio_context(nullptr);
+        // 1. Configure the context for minimum latency
+        EmscriptenWebAudioCreateAttributes attrs = {0};
+        attrs.latencyHint = "interactive"; 
+        attrs.sampleRate = 48000; // Match this exactly to your hardware!
         
+        // 2. Create context with the new attributes
+        EMSCRIPTEN_WEBAUDIO_T context = emscripten_create_audio_context(&attrs);
+        
+        // Save Context to JS window object
         EM_ASM({ window.audioContext = emscriptenGetAudioObject($0); }, context);
 
+        // Spin up the Wasm Audio thread
         emscripten_start_wasm_audio_worklet_thread_async(
             context, audioThreadStack, sizeof(audioThreadStack), &OnThreadInitialized, nullptr);
     }
