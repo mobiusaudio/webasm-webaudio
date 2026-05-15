@@ -1,63 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="coi-serviceworker.js"></script>
     <meta charset="UTF-8">
-    <title>C++ Wasm Audio I/O</title>
-    <style> body { font-family: sans-serif; padding: 2rem; } </style>
+    <title>ImGui Audio Rig</title>
+    <script src="coi-serviceworker.js"></script>
+    <style>
+        body { margin: 0; background-color: #1a1a1a; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        /* Emscripten binds to the canvas with id="canvas" by default */
+        canvas { border: 0px none; background-color: black; width: 800px; height: 600px; }
+    </style>
 </head>
 <body>
-    <h2>C++ Real-Time WebAudio Gain</h2>
-    <button id="startBtn">1. Start Audio & Microphone</button>
-    <br><br>
-
-    <label for="gainSlider">2. Adjust Gain:</label>
-    <input type="range" id="gainSlider" min="0" max="2" step="0.01" value="0.5" disabled>
-
-    <script src="build/audio_app.js"></script>
+    <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
 
     <script>
-        const startBtn = document.getElementById('startBtn');
-        const gainSlider = document.getElementById('gainSlider');
+        // 1. Tell Emscripten EXACTLY which canvas to draw ImGui onto
+        var Module = {
+            canvas: document.getElementById('canvas')
+        };
 
-        startBtn.addEventListener('click', async () => {
-            startBtn.disabled = true;
-
-            // 1. Trigger C++ to create AudioContext and start Worklet Thread
-            Module.ccall('InitAudio', null, [], []);
-
-            // 2. Wait for C++ to finish building the node
-            window.addEventListener('WorkletReady', async () => {
-                try {
-                    // 3. Request Microphone Access
-                    // New code: Request raw, unprocessed microphone audio
-                    const stream = await navigator.mediaDevices.getUserMedia({
-                        audio: {
-                            echoCancellation: false,
-                            noiseSuppression: false,
-                            autoGainControl: false
-                        },
-                        video: false
-                    });
-
-                    // 4. Connect Microphone to the Wasm Worklet Node
-                    const micSource = window.audioContext.createMediaStreamSource(stream);
-                    micSource.connect(window.wasmWorkletNode);
-
-                    gainSlider.disabled = false;
-                    startBtn.innerText = "Audio Running!";
-                    console.log("Success: Mic -> C++ Wasm -> Speakers");
-                } catch (err) {
-                    console.error("Microphone access denied.", err);
-                    startBtn.innerText = "Mic Access Failed";
-                }
-            });
-        });
-
-        // Send slider values back to C++ in real-time
-        gainSlider.addEventListener('input', (e) => {
-            Module.ccall('SetGain', null, ['number'], [parseFloat(e.target.value)]);
-        });
+        // 2. Microphone routing function
+        window.ConnectMicrophone = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+                    video: false
+                });
+                const micSource = window.audioContext.createMediaStreamSource(stream);
+                micSource.connect(window.wasmWorkletNode);
+                console.log("Mic successfully routed to C++!");
+            } catch (err) {
+                console.error("Microphone access denied.", err);
+            }
+        };
     </script>
+
+    <script src="build/audio_app.js"></script>
 </body>
 </html>
