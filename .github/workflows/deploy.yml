@@ -34,13 +34,14 @@ jobs:
           cmake --build build
 
       - name: Prepare Deployment Folder
-        # Move the HTML and the newly compiled Wasm/JS files into a single 'dist' folder
         run: |
           mkdir dist
+          mkdir dist/build
           cp index.html dist/
-          cp build/audio_app.js dist/
-          cp build/audio_app.wasm dist/
           cp coi-serviceworker.js dist/
+          
+          # Copy all build artifacts (js, wasm, map) into the dist/build folder
+          cp build/audio_app.* dist/build/
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4

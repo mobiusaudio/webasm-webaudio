@@ -26,5 +26,8 @@ target_link_options(audio_app PRIVATE
     "-sWASM_WORKERS=1"
     "-sEXPORTED_FUNCTIONS=['_main','_InitAudio','_SetGain']"
     "-sEXPORTED_RUNTIME_METHODS=['ccall']"
-    "--no-entry" # We handle initialization explicitly
+    "--no-entry"
+    "$<IF:$<CONFIG:Debug>,-O0,-O3>"         # No optimization in debug, max in release
+    "$<IF:$<CONFIG:Debug>,-g,-g0>"          # Generate DWARF debug info
+    "$<IF:$<CONFIG:Debug>,-gsource-map,>"   # Generate Source Maps for the browser
 )

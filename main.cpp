@@ -81,7 +81,7 @@ extern "C" {
     // Called by JS after the user clicks a button (Browser Security Requirement)
     EMSCRIPTEN_KEEPALIVE void InitAudio() {
         // 1. Configure the context for minimum latency
-        EmscriptenWebAudioCreateAttributes attrs = {0};
+        EmscriptenWebAudioCreateAttributes attrs;
         attrs.latencyHint = "interactive"; 
         attrs.sampleRate = 48000; // Match this exactly to your hardware!
         
