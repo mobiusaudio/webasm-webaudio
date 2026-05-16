@@ -3,7 +3,8 @@
 #include <emscripten/webaudio.h>
 #include "Parameters.h"
 
-class AudioEngine {
+class AudioEngine
+{
 public:
     AudioEngine(Parameters& params);
     ~AudioEngine() = default;
@@ -23,4 +24,10 @@ private:
 
     Parameters& m_params;
     alignas(16) uint8_t m_audioThreadStack[4096];
+
+    AudioEngine() = delete;
+    AudioEngine(const AudioEngine&) = delete;
+    AudioEngine(AudioEngine&&) = delete;
+    const AudioEngine operator=(const AudioEngine&) = delete;
+    const AudioEngine operator=(AudioEngine&&) = delete;
 };

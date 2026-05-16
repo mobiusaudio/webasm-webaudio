@@ -9,15 +9,16 @@
 
 #include "AudioEngine.h"
 
-// Globals for the Emscripten main loop
 SDL_Window* g_Window = nullptr;
 SDL_GLContext g_GLContext = nullptr;
 Parameters g_Params;
 AudioEngine g_AudioEngine(g_Params);
 
-void MainLoop() {
+void MainLoop()
+{
     SDL_Event event;
-    while (SDL_PollEvent(&event)) {
+    while (SDL_PollEvent(&event))
+    {
         ImGui_ImplSDL2_ProcessEvent(&event);
     }
 
@@ -27,17 +28,21 @@ void MainLoop() {
 
     ImGui::Begin("C++ DSP Rig");
 
-    if (!g_Params.audioRunning.load()) {
-        if (ImGui::Button("Start Audio Engine", ImVec2(-1.0f, 40.0f))) {
+    if (!g_Params.audioRunning.load())
+    {
+        if (ImGui::Button("Start Audio Engine", ImVec2(50.0f, 100.0f)))
+        {
             g_AudioEngine.Start();
         }
-    } else {
+    }
+    else
+    {
         ImGui::TextColored(ImVec4(0,1,0,1), "Audio Engine Running");
         ImGui::Spacing();
 
-        // Read the atomic, let ImGui modify it, then store it back
         float gain = g_Params.masterGain.load();
-        if (ImGui::SliderFloat("Master Gain", &gain, 0.0f, 2.0f)) {
+        if (ImGui::SliderFloat("Master Gain", &gain, 0.0f, 2.0f))
+        {
             g_Params.masterGain.store(gain, std::memory_order_relaxed);
         }
     }
@@ -52,7 +57,8 @@ void MainLoop() {
     SDL_GL_SwapWindow(g_Window);
 }
 
-int main() {
+int main()
+{
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
