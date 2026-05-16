@@ -5,14 +5,23 @@
     <title>ImGui Audio Rig</title>
     <script src="coi-serviceworker.js"></script>
     <style>
-        body { margin: 0; background-color: #1a1a1a; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        /* Emscripten binds to the canvas with id="canvas" by default */
-        canvas { border: 0px none; background-color: black; width: 800px; height: 600px; }
+        body { 
+            margin: 0; 
+            padding: 0;
+            background-color: #1a1a1a; 
+            overflow: hidden; /* Prevent scrollbars */
+        }
+        /* Force the canvas to exactly match the viewport size */
+        canvas { 
+            display: block; 
+            width: 100vw; 
+            height: 100vh; 
+            border: none; 
+        }
     </style>
 </head>
 <body>
     <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
-
     <script>
         // 1. Tell Emscripten EXACTLY which canvas to draw ImGui onto
         var Module = {
@@ -34,7 +43,6 @@
             }
         };
     </script>
-
     <script src="build/audio_app.js"></script>
 </body>
 </html>
